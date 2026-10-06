@@ -6,11 +6,9 @@ Saajnika is a production-style women's fashion e-commerce platform designed to p
 
 The platform also provides administrative and operational capabilities for managing products, inventory, orders, payments, coupons, banners, customers, and other business operations.
 
-> Internship Project — Production E-Commerce System
-
 ---
 
-## 🚀 Project Overview
+##  Project Overview
 
 Saajnika is not designed as a static or demo store.
 
@@ -54,7 +52,7 @@ The backend remains authoritative for:
 
 ---
 
-# ✨ Key Features
+# Key Features
 
 ## 👩 Customer Features
 
@@ -1089,6 +1087,4 @@ Implementation follows the defined milestone sequence:
 
 ---
 
-## 📄 License
 
-Add the applicable project license here.
