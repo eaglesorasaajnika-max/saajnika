@@ -1,477 +1,820 @@
 # SAAJNIKA
 
-## Production E-Commerce Platform
+### Production-Ready Women's Fashion E-Commerce Platform
 
-> Build a real-world, production-ready commerce platform — not just a demo store.
+Saajnika is a production-style women's fashion e-commerce platform designed to provide a complete customer shopping journey — from product discovery and search to cart, checkout, payment, order tracking, and fulfilment.
 
-Saajnika is a production-style women's fashion e-commerce platform developed as an internship project. It covers customer accounts, catalog, cart, checkout, payments, orders, shipping, notifications, admin operations, security, background jobs, monitoring, testing, and deployment.
+The platform also provides administrative and operational capabilities for managing products, inventory, orders, payments, coupons, banners, customers, and other business operations.
 
-## 🎯 Project Objective
+> Internship Project — Production E-Commerce System
 
-The goal is to demonstrate how a business requirement can be transformed into a reliable, secure, maintainable, production-style e-commerce application.
+---
 
-### Core Customer Journey
+## 🚀 Project Overview
+
+Saajnika is not designed as a static or demo store.
+
+The system is built around a complete production-oriented e-commerce workflow:
 
 ```text
-Home → Categories → Product Listing → Search / Filters → Product Details
-→ Variant / Size → Add to Cart / Buy Now → Address → Delivery → Coupon
-→ Payment → Order Confirmation → Order Tracking
+Home
+  ↓
+Categories
+  ↓
+Product Listing
+  ↓
+Search / Filters
+  ↓
+Product Details
+  ↓
+Cart
+  ↓
+Address
+  ↓
+Checkout
+  ↓
+Payment
+  ↓
+Order Confirmation
+  ↓
+Order Tracking
+  ↓
+Delivery
 ```
 
-## 🛠️ Technology Stack
+The backend remains authoritative for:
+
+- Pricing
+- Inventory
+- Payment state
+- Order state
+- Coupon validation
+- Checkout calculations
+- Order transitions
+
+---
+
+# ✨ Key Features
+
+## 👩 Customer Features
+
+- Customer registration and login
+- JWT authentication
+- OTP verification
+- Profile management
+- Delivery address management
+- Product browsing
+- Product search
+- Product filtering
+- Product sorting
+- Product variants
+- Size/color selection
+- Wishlist
+- Shopping cart
+- Buy Now
+- Coupon application
+- Checkout
+- Razorpay payment
+- Order history
+- Order tracking
+- Account security
+- Transactional notifications
+
+---
+
+## 🛍️ Product & Catalog
+
+### Product
+
+- Product name
+- Slug
+- Description
+- Category
+- Brand / collection
+- Base price
+- Sale price
+- Product status
+- SEO metadata
+- Timestamps
+
+### Variants
+
+- Size
+- Color
+- Other business-specific attributes
+- SKU
+
+### Inventory
+
+- Available quantity
+- Reserved quantity where applicable
+- Low-stock threshold
+- Stock status
+- Inventory history
+- Admin inventory adjustments
+
+### Product Media
+
+Product and banner images are managed through Cloudinary.
+
+Features include:
+
+- Multiple images
+- Thumbnails
+- Primary image
+- Image ordering
+- Cloudinary transformations
+
+The system prevents purchasing unavailable variants and revalidates stock during checkout.
+
+---
+
+# 🛒 Cart & Checkout
+
+The checkout system is completely server-controlled.
+
+### Cart
+
+Users can:
+
+- Add products
+- Update quantities
+- Remove products
+- View stock state
+- Calculate cart subtotal
+
+### Checkout
+
+The backend calculates:
+
+- Product prices
+- Discounts
+- Coupon discounts
+- Shipping charges
+- Applicable taxes/fees
+- Final payable amount
+
+The browser is never treated as the source of truth for the final amount.
+
+---
+
+# 💳 Payment System
+
+Saajnika uses **Razorpay** for payment processing.
+
+### Payment Flow
+
+```text
+Customer
+   ↓
+React Frontend
+   ↓
+Django API
+   ↓
+Validate Cart
+   ↓
+Validate Stock
+   ↓
+Calculate Final Amount
+   ↓
+Create Razorpay Order
+   ↓
+Razorpay Checkout
+   ↓
+Payment
+   ↓
+Backend Verification
+   ↓
+Webhook Processing
+   ↓
+Order Paid
+```
+
+### Payment Security
+
+- Razorpay order created server-side
+- Server-calculated amount
+- Payment signature verification
+- Webhook verification
+- Webhook idempotency
+- Payment audit records
+- Duplicate processing prevention
+- Secret keys remain server-side
+
+> Razorpay secret keys must never be exposed to the React browser bundle.
+
+---
+
+# 📦 Order Management
+
+Orders use controlled backend state transitions.
+
+```text
+CREATED
+   ↓
+PAYMENT_PENDING
+   ↓
+PAID
+   ↓
+PROCESSING
+   ↓
+PACKED
+   ↓
+SHIPPED
+   ↓
+OUT_FOR_DELIVERY
+   ↓
+DELIVERED
+```
+
+Exception states may include:
+
+```text
+PAYMENT_FAILED
+CANCELLED
+RETURN_REQUESTED
+RETURNED
+REFUNDED
+```
+
+Orders preserve historical information such as:
+
+- Purchased price
+- Discount
+- Shipping address snapshot
+- SKU / variant information
+- Payment references
+- Gateway order ID
+- Order status
+- Timestamps
+
+---
+
+# 🚚 Shipping & Fulfilment
+
+Shipping is designed around a provider abstraction such as Shiprocket or an equivalent provider.
+
+Supported functionality includes:
+
+- Pincode serviceability
+- Shipment creation
+- Courier selection
+- Shipment ID
+- Tracking number
+- Tracking updates
+- Delivery status
+- Provider failure handling
+- Safe retries
+
+The customer sees simplified shipment statuses without exposing internal provider details.
+
+---
+
+# 📧 Notifications & Background Jobs
+
+Saajnika uses **Celery + Redis** for asynchronous and scheduled processing.
+
+Redis is used for:
+
+- Caching
+- Celery message brokering
+
+Celery workers handle:
+
+- Email
+- SMS tasks
+- OTP delivery
+- Order notifications
+- Shipping notifications
+- Payment reconciliation
+- Abandoned-cart cleanup
+- Cache invalidation
+
+> Redis itself is not the email system. Celery workers consume queued jobs and communicate with the configured SMTP/email provider.
+
+### Notification Events
+
+- Welcome / account verification
+- OTP verification
+- Order placed
+- Payment successful
+- Payment failed
+- Order shipped
+- Order delivered
+- Password/security notifications
+
+Tasks use bounded retries and exponential backoff where appropriate.
+
+---
+
+# 👨‍💼 Admin & Operations
+
+The platform includes administrative functionality for managing the business.
+
+### Admin Modules
+
+#### Products
+
+- Create products
+- Edit products
+- Archive products
+- Manage variants
+- Manage prices
+- Manage images
+- Manage stock
+
+#### Categories
+
+- Create categories
+- Reorder categories
+- Control visibility
+
+#### Orders
+
+- Search orders
+- Inspect orders
+- Update allowed states
+- Cancel orders
+- Refund where supported
+
+#### Payments
+
+- View payment references
+- View reconciliation status
+
+#### Coupons
+
+- Create coupon codes
+- Configure validity
+- Set usage limits
+- Configure minimum order value
+- Configure discounts
+
+#### Banners
+
+- Manage homepage banners
+- Manage carousel content
+- Configure ordering
+
+#### Customers
+
+- Search accounts
+- View relevant account/order information
+
+#### Inventory
+
+- Stock adjustments
+- Low-stock visibility
+- Inventory history
+
+#### Audit
+
+- Record admin action
+- Record who performed the action
+- Record when the action occurred
+
+---
+
+# 🏗️ Technology Stack
 
 | Layer | Technology |
 |---|---|
-| Frontend | React + TypeScript |
-| Styling | Tailwind CSS |
-| Build Tool | Vite |
-| Backend | Node.js + TypeScript |
-| API | Express.js |
-| Database | Firebase Realtime Database |
-| Authentication | Firebase Authentication |
-| Validation | Zod |
-| Media | Cloudinary |
+| Frontend | React |
+| UI | Bootstrap / Tailwind CSS |
+| Backend | Django |
+| API | Django REST Framework |
+| Database | PostgreSQL |
+| Authentication | JWT / SimpleJWT |
+| Media Storage | Cloudinary |
 | Cache | Redis |
-| Background Jobs | BullMQ + Redis |
+| Message Broker | Redis |
+| Background Jobs | Celery |
+| Scheduler | Celery Beat |
 | Payments | Razorpay |
-| Shipping | Shiprocket or equivalent |
-| API Documentation | Swagger / OpenAPI |
-| Testing | Jest + Supertest |
+| Shipping | Shiprocket / Equivalent |
 | Web Server | Nginx |
+| Application Server | Gunicorn |
 | Containers | Docker + Docker Compose |
-| Version Control | Git + GitHub |
-| Monitoring | Structured Logging + Sentry |
+| Version Control | Git + GitHub/GitLab |
+| Testing | Pytest / Django Tests / API Tests |
+| Monitoring | Structured Logs + Error Monitoring |
 
-## 🏗️ Architecture
+---
+
+# 🏛️ System Architecture
 
 ```text
-Customer
-   │
-   ▼
-React + TypeScript + Tailwind
-   │ HTTPS
-   ▼
-Node.js + Express REST API
-   ├──────────────► Firebase Realtime Database
-   ├──────────────► Cloudinary
-   ├──────────────► Razorpay
-   ├──────────────► Shiprocket
-   └──────────────► Redis
-                         │
-                         ▼
-                      BullMQ
-                         │
-                         ▼
-                 Background Workers
+                         ┌──────────────────────┐
+                         │      Customer        │
+                         └──────────┬───────────┘
+                                    │
+                                    ▼
+                         ┌──────────────────────┐
+                         │    React Frontend    │
+                         │   Customer + Admin   │
+                         └──────────┬───────────┘
+                                    │ HTTPS
+                                    ▼
+                         ┌──────────────────────┐
+                         │        Nginx         │
+                         │    Reverse Proxy     │
+                         └──────────┬───────────┘
+                                    │
+                                    ▼
+                         ┌──────────────────────┐
+                         │    Django REST API   │
+                         │    Business Logic    │
+                         └───────┬───────┬──────┘
+                                 │       │
+                    ┌────────────┘       └─────────────┐
+                    ▼                                  ▼
+          ┌──────────────────┐                ┌──────────────────┐
+          │    PostgreSQL    │                │      Redis       │
+          │ Persistent Data  │                │ Cache / Broker   │
+          └──────────────────┘                └────────┬─────────┘
+                                                       │
+                                                       ▼
+                                             ┌──────────────────┐
+                                             │      Celery       │
+                                             │ Background Jobs   │
+                                             └───────┬──────────┘
+                                                     │
+                    ┌────────────────────────────────┼──────────────┐
+                    ▼                                ▼              ▼
+             ┌────────────┐                  ┌────────────┐  ┌────────────┐
+             │ Cloudinary │                  │  Razorpay  │  │ Shiprocket │
+             │   Media    │                  │  Payments  │  │  Shipping  │
+             └────────────┘                  └────────────┘  └────────────┘
 ```
 
-## 🗄️ Database
+---
 
-Firebase Realtime Database is the primary application data store.
+# 📁 Repository Structure
 
 ```text
 saajnika/
-├── users/
-├── products/
-├── categories/
-├── variants/
-├── inventory/
-├── carts/
-├── wishlists/
-├── addresses/
-├── coupons/
-├── orders/
-├── payments/
-├── shipments/
-├── banners/
-├── notifications/
-└── auditLogs/
+│
+├── backend/
+│   ├── apps/
+│   │   ├── catalog/
+│   │   ├── accounts/
+│   │   ├── cart/
+│   │   ├── orders/
+│   │   ├── payments/
+│   │   ├── shipping/
+│   │   └── notifications/
+│   │
+│   ├── manage.py
+│   ├── requirements.txt
+│   └── ...
+│
+├── frontend/
+│   ├── src/
+│   ├── public/
+│   ├── package.json
+│   └── ...
+│
+├── docker/
+│   ├── nginx/
+│   └── ...
+│
+├── docs/
+│   ├── API.md
+│   ├── ARCHITECTURE.md
+│   ├── ERD.md
+│   ├── TESTING.md
+│   └── DEPLOYMENT.md
+│
+├── docker-compose.yml
+├── .gitignore
+└── README.md
 ```
 
-Firebase stores application data. Large image files are stored in Cloudinary; Firebase stores their URLs and metadata.
+---
 
-## 🖼️ Media Management
+# 🔐 Authentication & Security
 
-Cloudinary is used for product images, thumbnails, category images, promotional banners, and brand assets.
+### Authentication
+
+- Custom user model
+- JWT access token
+- JWT refresh token
+- Short-lived access tokens
+- Controlled refresh strategy
+- OTP verification
+- Logout/token invalidation strategy
+
+### Authorization
+
+- Customer role
+- Admin role
+- Server-side permission enforcement
+- Customer data isolation
+- Admin endpoint protection
+
+### Security Controls
+
+- HTTPS
+- Environment-based secrets
+- CORS configuration
+- CSRF protection where applicable
+- DRF input validation
+- Rate limiting
+- Webhook signature verification
+- Django ORM / parameterized queries
+- Upload validation
+- PII protection
+- No secrets in Git
+
+---
+
+# 🔌 API Structure
+
+## Authentication
 
 ```text
-Cloudinary → Actual image files
-Firebase   → Image URL + metadata
+POST /api/auth/send-otp/
+POST /api/auth/verify-otp/
+POST /api/auth/refresh/
+POST /api/auth/logout/
 ```
 
-## 🔐 Authentication & Authorization
-
-Authentication is handled using Firebase Authentication. The backend verifies authenticated requests and applies authorization rules.
-
-Roles:
+## Products
 
 ```text
-CUSTOMER
-ADMIN
+GET /api/products/
+GET /api/products/{id}/
+GET /api/products/home/
 ```
 
-Customers can manage their own profile, addresses, cart, wishlist and orders. Admin permissions are enforced server-side for products, categories, variants, inventory, orders, payments, coupons, banners, customers and audit information.
-
-## 🛍️ Catalog
-
-The catalog supports products, categories, variants, SKU, pricing, stock, images, search, filters, sorting, pagination, featured/new/discounted products, related products and out-of-stock handling.
-
-Example product structure:
+## Cart
 
 ```text
-Product
-├── Name
-├── Slug
-├── Description
-├── Category
-├── Brand / Collection
-├── Base Price
-├── Sale Price
-├── Status
-├── SEO Metadata
-├── Images
-├── Variants
-└── Timestamps
+GET    /api/cart/
+POST   /api/cart/add/
+PATCH  /api/cart/update/
+DELETE /api/cart/remove/
 ```
 
-## 📦 Inventory
-
-The backend validates stock during checkout, prevents negative inventory, handles concurrent purchases, supports stock restoration where appropriate, and provides inventory history and admin visibility.
-
-Stock must be validated again during checkout, not only when an item is added to the cart.
-
-## 🛒 Cart & Checkout
+## Checkout & Payments
 
 ```text
-Cart → Address → Delivery → Coupon → Server-side Pricing → Order Creation → Payment
+POST /api/checkout/
+POST /api/buy-now/
+
+POST /api/payments/create/
+POST /api/payments/verify/
+POST /api/payments/webhook/
 ```
 
-The backend is authoritative for price, discount, stock, coupon validity and final payable amount.
-
-## 🎟️ Coupons
-
-Coupon rules can include code, expiry, minimum order value, discount, usage limit, customer eligibility, and active/inactive state. All rules are validated server-side.
-
-## 💰 Razorpay Payments
+## Orders
 
 ```text
-Customer
-   ↓
-Checkout
-   ↓
-Backend validates cart, stock and amount
-   ↓
-Backend creates Razorpay Order
-   ↓
-Frontend opens Razorpay Checkout
-   ↓
-Payment completed
-   ↓
-Backend verifies signature
-   ↓
-Razorpay Webhook
-   ↓
-Webhook verified and processed idempotently
-   ↓
-Payment / Order updated
+GET  /api/orders/
+GET  /api/orders/{id}/
+POST /api/orders/{id}/cancel/
 ```
 
-Never trust a browser-supplied final amount or frontend-only payment success. Razorpay secret keys must remain on the backend.
-
-### Payment Audit Fields
+## Shipping
 
 ```text
-internal_order_id
-razorpay_order_id
-razorpay_payment_id
-signature
-status
-webhook_event_id
-created_at
-updated_at
+GET /api/shipping/serviceability/
+GET /api/shipping/track/{id}/
 ```
 
-## 📋 Orders
-
-Orders preserve historical item prices, SKU/variant information, quantities, discounts, address snapshots, payment references, payment status, order status, shipment details, and timestamps.
-
-### Order States
+## Admin
 
 ```text
-CREATED → PAYMENT_PENDING → PAID → PROCESSING → PACKED
-→ SHIPPED → OUT_FOR_DELIVERY → DELIVERED
-```
-
-Possible exceptions: `PAYMENT_FAILED`, `CANCELLED`, `RETURN_REQUESTED`, `RETURNED`, `REFUNDED`.
-
-## 🚚 Shipping
-
-Shiprocket or an equivalent provider can handle pincode/serviceability, shipment creation, courier selection, shipment/tracking IDs, tracking updates and delivery status. Provider failures must be handled safely and retryable operations should be idempotent.
-
-## ⚡ Redis & BullMQ
-
-Redis is used for caching and queue infrastructure. BullMQ handles asynchronous work such as order emails, payment/shipping notifications, OTP delivery, payment reconciliation, abandoned-cart cleanup, scheduled tasks and provider retries.
-
-```text
-API Request → Redis Queue → BullMQ Worker → Process Job
-```
-
-Background work should not unnecessarily block customer-facing API requests.
-
-## 👨‍💼 Admin Operations
-
-Admin functionality includes:
-
-- Products: create/edit/archive, variants, prices, images, stock
-- Categories: create/reorder/visibility
-- Orders: search, inspect, allowed status updates, cancellation/refunds where supported
-- Payments: payment references and reconciliation status
-- Coupons: codes, limits, validity, minimum order and discounts
-- Banners: homepage content and ordering
-- Customers: controlled account/order information
-- Inventory: adjustments, low-stock visibility and history
-- Audit logs: who changed what and when
-
-## 🌐 API Structure
-
-```text
-/api/auth/...
-/api/profile/
-/api/profile/update/
-/api/products/
-/api/products/:id
-/api/products/home/
-/api/categories/
-/api/categories/:slug
-/api/cart/
-/api/cart/add/
-/api/cart/update/
-/api/cart/remove/
-/api/addresses/
-/api/addresses/:id
-/api/wishlist/
-/api/wishlist/toggle/
-/api/checkout/
-/api/buy-now/
-/api/payments/create/
-/api/payments/verify/
-/api/payments/webhook/
-/api/orders/
-/api/orders/:id
-/api/orders/:id/cancel/
-/api/shipping/serviceability/
-/api/shipping/track/:id
 /api/admin/products/
 /api/admin/orders/
 /api/admin/inventory/
 ```
 
-## 📱 Frontend Screens
+---
 
-Customer screens include Home, Product Listing, Product Details, Cart, Checkout, Payment Result, Orders, Order Details, Account, Addresses and Wishlist.
+# 🖥️ Frontend Screens
 
-Admin screens include Dashboard, Products, Categories, Inventory, Orders, Payments, Coupons, Banners, Customers and Audit Logs.
+| Screen | Main Functionality |
+|---|---|
+| Home | Header, search, categories, banners, offers |
+| Product Listing | Filters, sorting, pagination |
+| Product Detail | Gallery, variants, pricing, stock |
+| Cart | Items, quantities, coupon, price breakdown |
+| Checkout | Address, delivery, summary, payment |
+| Payment Result | Success, failure, pending states |
+| Orders | Order history and tracking |
+| Account | Profile, addresses, wishlist, security |
+| Admin | Products, orders, inventory, promotions |
 
-Every data-heavy screen should handle loading, empty, error, retry and success states. Payment pending/failed, expired authentication, out-of-stock variants, network failures and duplicate checkout clicks must have clear handling. The UI should be responsive across mobile, tablet and desktop.
+---
 
-## 🔒 Security
+# 📱 Responsive & UX Requirements
 
-Security is a core feature.
+The frontend is designed for:
 
-Implement authentication, authorization, input validation, rate limiting, explicit CORS, secure error handling, upload validation, webhook signature verification, idempotency and PII protection.
+- Mobile
+- Tablet
+- Desktop
 
-Never commit or expose:
+Every data-heavy screen should provide:
 
-```text
-.env
-Firebase private keys
-Razorpay secrets
-Cloudinary API secret
-Redis credentials
-Shiprocket credentials
+- Loading state
+- Empty state
+- Error state
+- Retry action
+
+Additional UX requirements:
+
+- Graceful JWT expiration handling
+- No purchasing out-of-stock variants
+- Clear payment failure/pending recovery
+- Duplicate checkout protection
+- Accessible labels
+- Keyboard navigation where applicable
+- Readable contrast
+
+---
+
+# 🐳 Local Development
+
+## Prerequisites
+
+- Git
+- Docker
+- Docker Compose
+- Node.js
+- Python
+- PostgreSQL tools if required
+
+## Clone Repository
+
+```bash
+git clone <YOUR_REPOSITORY_URL>
+cd saajnika
 ```
 
-## ⚙️ Environment Variables
+---
 
-### Backend
+# ⚙️ Environment Variables
+
+Create environment files according to the project configuration.
+
+Example:
 
 ```env
-NODE_ENV=development
-PORT=5000
-FRONTEND_URL=http://localhost:5173
+# Django
+SECRET_KEY=your_secret_key
+DEBUG=True
 
-FIREBASE_PROJECT_ID=
-FIREBASE_CLIENT_EMAIL=
-FIREBASE_PRIVATE_KEY=
-FIREBASE_DATABASE_URL=
+# Database
+POSTGRES_DB=saajnika
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=your_password
+POSTGRES_HOST=db
+POSTGRES_PORT=5432
 
-CLOUDINARY_CLOUD_NAME=
-CLOUDINARY_API_KEY=
-CLOUDINARY_API_SECRET=
+# Redis
+REDIS_URL=redis://redis:6379/0
 
-RAZORPAY_KEY_ID=
-RAZORPAY_KEY_SECRET=
-RAZORPAY_WEBHOOK_SECRET=
+# JWT
+JWT_SECRET_KEY=your_jwt_secret
 
-REDIS_URL=
+# Cloudinary
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
 
-SHIPROCKET_EMAIL=
-SHIPROCKET_PASSWORD=
+# Razorpay
+RAZORPAY_KEY_ID=your_key_id
+RAZORPAY_KEY_SECRET=your_key_secret
 
-SENTRY_DSN=
+# Email
+EMAIL_HOST=your_smtp_host
+EMAIL_PORT=587
+EMAIL_HOST_USER=your_email
+EMAIL_HOST_PASSWORD=your_password
+
+# Shipping
+SHIPPING_API_KEY=your_shipping_key
 ```
 
-### Frontend
+> **Never commit `.env` files or production secrets to Git.**
 
-Only browser-safe/public configuration belongs here:
+---
 
-```env
-VITE_API_BASE_URL=http://localhost:5000/api
-VITE_FIREBASE_API_KEY=
-VITE_FIREBASE_AUTH_DOMAIN=
-VITE_FIREBASE_PROJECT_ID=
-VITE_FIREBASE_STORAGE_BUCKET=
-VITE_FIREBASE_MESSAGING_SENDER_ID=
-VITE_FIREBASE_APP_ID=
-```
+# 🐳 Docker Setup
 
-Never expose `RAZORPAY_KEY_SECRET`, `CLOUDINARY_API_SECRET`, `FIREBASE_PRIVATE_KEY`, Redis credentials or Shiprocket credentials to the browser.
-
-## 📁 Repository Structure
-
-```text
-saajnika/
-├── backend/
-│   ├── src/
-│   │   ├── config/
-│   │   ├── controllers/
-│   │   ├── routes/
-│   │   ├── services/
-│   │   ├── middleware/
-│   │   ├── validators/
-│   │   ├── queues/
-│   │   ├── workers/
-│   │   ├── utils/
-│   │   └── server.ts
-│   ├── tests/
-│   ├── package.json
-│   └── .env.example
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── layouts/
-│   │   ├── hooks/
-│   │   ├── services/
-│   │   ├── contexts/
-│   │   ├── types/
-│   │   └── utils/
-│   ├── public/
-│   ├── package.json
-│   └── .env.example
-├── docs/
-│   ├── architecture/
-│   ├── api/
-│   ├── database/
-│   ├── deployment/
-│   └── testing/
-├── docker/
-├── docker-compose.yml
-├── .gitignore
-├── README.md
-└── package.json
-```
-
-## 🧪 Testing
-
-Testing covers unit, API, integration, frontend, security and regression layers.
-
-Critical scenarios include:
-
-- Two users attempting to purchase the last unit simultaneously
-- Payment succeeding while the frontend callback is interrupted
-- Duplicate payment webhooks
-- Payment failure after internal order creation
-- Expired/invalid/overused coupons
-- JWT/authentication expiry during checkout
-- Temporary email provider failure and BullMQ retry
-- Shipping provider timeout
-- Customer/admin permission boundary violations
-
-## 🐳 Docker
-
-Example services:
+Expected services:
 
 ```text
 frontend
 backend
+postgres
 redis
+celery
 nginx
 ```
 
-Firebase, Cloudinary, Razorpay and Shiprocket remain external services.
+Start the development environment:
 
 ```bash
 docker compose up --build
-docker compose down
 ```
 
-## 🚀 Local Development
-
-### 1. Clone
+Run migrations:
 
 ```bash
-git clone https://github.com/eaglesorasaajnika-max/saajnika.git
-cd saajnika
+docker compose exec backend python manage.py migrate
 ```
 
-### 2. Install dependencies
+Create an admin user:
 
 ```bash
-cd backend
-npm install
-
-cd ../frontend
-npm install
+docker compose exec backend python manage.py createsuperuser
 ```
 
-### 3. Configure environment
+---
 
-Create `backend/.env` and `frontend/.env` using the corresponding `.env.example` files.
+# 🧪 Testing
 
-### 4. Start backend
+Saajnika follows a multi-layer testing strategy.
+
+### Unit Tests
+
+- Pricing rules
+- Coupon rules
+- Inventory rules
+- Order transitions
+- Utility/service logic
+
+### API Tests
+
+- Authentication
+- Products
+- Cart
+- Checkout
+- Orders
+- Payment verification
+- Admin permissions
+
+### Integration Tests
+
+- PostgreSQL
+- Redis
+- Celery
+- Payment sandbox/mocks
+- Shipping sandbox/mocks
+
+Run tests:
 
 ```bash
-cd backend
-npm run dev
+pytest
 ```
 
-Default backend URL:
+or:
+
+```bash
+python manage.py test
+```
+
+---
+
+# 🧪 Critical Test Scenarios
+
+### Concurrent Stock Purchase
+
+The system must prevent two users from purchasing more stock than exists.
+
+### Duplicate Payment Webhook
 
 ```text
-http://localhost:5000
+Razorpay
+   │
+   ├── Webhook #1
+   │
+   └── Webhook #2
+          ↓
+     Idempotency Check
+          ↓
+   Process Only Once
 ```
 
-### 5. Start frontend
+Other critical scenarios:
 
-```bash
-cd frontend
-npm run dev
-```
+- Payment succeeds but frontend callback fails
+- Payment fails after internal order creation
+- Expired coupon
+- Overused coupon
+- JWT expiry during checkout
+- Temporary email failure
+- Shipping provider timeout
+- Unauthorized admin operation
 
-Default frontend URL:
+---
 
-```text
-http://localhost:5173
-```
+# 🚀 Production Deployment
 
-## 📖 API Documentation
-
-Swagger/OpenAPI documentation should include endpoints, methods, authentication requirements, request bodies, query parameters, responses, errors and examples.
-
-## 🌍 Deployment
-
-The project supports local, staging and production environments.
+Production architecture:
 
 ```text
 Internet
@@ -480,144 +823,272 @@ HTTPS
    ↓
 Nginx
    ↓
-Node.js + Express
+Gunicorn
    ↓
-Firebase Realtime Database
-
-External:
-├── Cloudinary
-├── Redis
-├── Razorpay
-├── Shiprocket
-└── Sentry
+Django REST API
+   ↓
+PostgreSQL
+   +
+Redis
+   +
+Celery Workers
 ```
 
-Production requirements include HTTPS, secure environment variables, Docker, Nginx, Redis/BullMQ workers, structured logs, monitoring, recovery procedures and rollback strategy.
+Production requirements:
 
-## 💾 Backup & Recovery
+- HTTPS
+- Nginx
+- Gunicorn
+- PostgreSQL
+- Redis
+- Celery workers
+- Secure environment variables
+- Cloudinary
+- Automated backups
+- Logs
+- Error monitoring
+- Worker restart handling
+- Deployment rollback strategy
 
-Firebase Realtime Database is the application database. Firebase-supported backup/export and recovery mechanisms should be configured, documented and tested.
+---
 
-A backup that has never been restored should not be considered a proven recovery strategy.
+# 💾 Backup Strategy
 
-## 📅 20-Day Implementation Plan
+PostgreSQL backups should:
 
-| Day | Focus |
-|---|---|
-| 1 | Repository, architecture and environment setup |
-| 2 | Firebase Realtime Database + Cloudinary |
-| 3 | Authentication and authorization |
-| 4 | Product/catalog backend |
-| 5 | Product catalog frontend |
-| 6 | Cloudinary media + wishlist |
-| 7 | Cart |
-| 8 | Checkout + address + coupons |
-| 9 | Razorpay integration |
-| 10 | Orders + status transitions |
-| 11 | Admin operations |
-| 12 | Redis + BullMQ + notifications |
-| 13 | Shipping integration |
-| 14 | Security hardening |
-| 15 | Unit/API testing |
-| 16 | Payment, webhook and failure testing |
-| 17 | Frontend UX and responsive polish |
-| 18 | Docker + Nginx + deployment |
-| 19 | Full QA + bug fixing |
-| 20 | Documentation + final handover |
+- Run regularly
+- Be stored separately from the application server
+- Maintain multiple restore points
+- Have documented restoration procedures
+- Be periodically tested
 
-## 📋 Definition of Done
+> A backup that has never been restored is not a proven recovery strategy.
 
-- [ ] Customer registration/login works.
-- [ ] Protected APIs are implemented.
-- [ ] Customer can browse/search/filter products.
-- [ ] Product variants work.
-- [ ] Product images are managed through Cloudinary.
-- [ ] Cart functionality works.
-- [ ] Stock is validated during checkout.
-- [ ] Pricing is calculated server-side.
-- [ ] Coupons are validated server-side.
-- [ ] Delivery addresses work.
-- [ ] Razorpay sandbox payment works.
-- [ ] Payment signatures are verified.
-- [ ] Payment webhooks are verified.
-- [ ] Duplicate webhook processing is prevented.
-- [ ] Orders preserve historical item prices and address snapshots.
-- [ ] Order status transitions are controlled.
-- [ ] Background jobs work through BullMQ/Redis.
-- [ ] Notifications use background processing where appropriate.
-- [ ] Admin can manage products, inventory, orders and promotions.
-- [ ] Shipping integration is implemented or cleanly abstracted.
-- [ ] API validation and authorization work.
-- [ ] Critical tests pass.
-- [ ] Frontend handles loading, empty, error and payment states.
-- [ ] Production secrets are not committed.
-- [ ] Docker environment is reproducible.
-- [ ] Deployment is documented.
-- [ ] Logs and monitoring are available.
-- [ ] README and API documentation are complete.
+---
 
-## 🔀 Git Workflow
+# 🌿 Git Workflow
 
-Use feature branches:
+Recommended workflow:
 
 ```text
 main
-└── develop
-    ├── feature/auth
-    ├── feature/catalog
-    ├── feature/cart
-    ├── feature/checkout
-    ├── feature/payment
-    ├── feature/orders
-    ├── feature/shipping
-    └── feature/admin
+ │
+ ├── feature/authentication
+ ├── feature/catalog
+ ├── feature/cart
+ ├── feature/checkout
+ ├── feature/payments
+ ├── feature/orders
+ ├── feature/shipping
+ └── feature/admin
 ```
 
-Example:
+Development practices:
 
-```bash
-git checkout -b feature/catalog
-git add .
-git commit -m "feat: implement product catalog"
-git push origin feature/catalog
-```
+- Use feature branches
+- Keep commits focused
+- Write descriptive commit messages
+- Open Pull Requests / Merge Requests
+- Do not commit secrets
+- Do not commit database dumps
+- Keep README updated
+- Document architectural decisions
+- Track work using issues/tasks
+- Resolve lint/test failures before review
 
-Use Pull Requests for meaningful changes. Never commit `.env`, secrets, private keys, database dumps or generated build artifacts.
+---
 
-## 📦 Final Handover
+# 📋 Implementation Roadmap
 
-The final project should contain:
+| Phase | Module | Result |
+|---|---|---|
+| 1 | Foundation | Docker, Django, React, PostgreSQL, Redis |
+| 2 | Authentication | User, OTP, JWT, permissions |
+| 3 | Catalog | Products, variants, Cloudinary |
+| 4 | Cart | Cart APIs, UI, stock validation |
+| 5 | Checkout | Address, coupons, pricing |
+| 6 | Payments | Razorpay, verification, webhooks |
+| 7 | Orders | History, state machine, admin |
+| 8 | Async | Celery, Redis, notifications |
+| 9 | Shipping | Serviceability, shipment, tracking |
+| 10 | Production | Nginx, Gunicorn, backups, monitoring |
+
+---
+
+# 📊 Definition of Done
+
+The project is considered complete when the critical customer, payment, fulfilment, administration and production workflows are implemented and tested.
+
+### Customer
+
+- [ ] Registration/login
+- [ ] JWT-protected APIs
+- [ ] Product browsing
+- [ ] Search/filter
+- [ ] Product variants
+- [ ] Wishlist
+- [ ] Cart
+- [ ] Address management
+- [ ] Checkout
+- [ ] Order tracking
+
+### Commerce
+
+- [ ] Server-side pricing
+- [ ] Coupon validation
+- [ ] Inventory validation
+- [ ] Transactional order creation
+
+### Payments
+
+- [ ] Razorpay integration
+- [ ] Signature verification
+- [ ] Webhook verification
+- [ ] Idempotency
+
+### Operations
+
+- [ ] Admin product management
+- [ ] Inventory management
+- [ ] Order management
+- [ ] Promotions
+- [ ] Shipping integration
+
+### Infrastructure
+
+- [ ] PostgreSQL
+- [ ] Redis
+- [ ] Celery
+- [ ] Docker
+- [ ] Nginx
+- [ ] Gunicorn
+- [ ] Backups
+- [ ] Logging
+- [ ] Error monitoring
+
+### Documentation
+
+- [ ] README
+- [ ] API documentation
+- [ ] ER diagram
+- [ ] Architecture diagram
+- [ ] Testing report
+- [ ] Deployment guide
+
+---
+
+# 📦 Final Handoff Package
+
+The final project handoff should contain:
 
 ```text
 Source Code
-README
-Environment Documentation
-API Documentation
-Firebase Data Structure
-Architecture Diagram
-Test Report
-Deployment Guide
+├── Frontend
+├── Backend
+└── Configuration
+
+Documentation
+├── README
+├── API Documentation
+├── ER Diagram
+├── Architecture Diagram
+├── Test Report
+└── Deployment Guide
+
 Demo
+└── Complete customer purchase journey
 ```
 
-The final demonstration should cover the customer purchase journey, admin operations, payment flow, shipping, and failure/edge cases.
+---
 
-## 👥 Project Information
+# 🔒 Security Notice
 
-**Project:** Saajnika Production E-Commerce  
-**Project Type:** Internship Assignment  
-**Domain:** Women's Fashion E-Commerce  
-**Frontend:** React + TypeScript + Tailwind CSS  
-**Backend:** Node.js + Express + TypeScript  
-**Database:** Firebase Realtime Database  
-**Authentication:** Firebase Authentication  
+Never commit the following to Git:
+
+```text
+.env
+API Keys
+Razorpay Secret
+Cloudinary Secret
+Database Passwords
+JWT Secrets
+SMTP Passwords
+Shipping API Keys
+Production Credentials
+Database Dumps
+```
+
+Use environment variables or an appropriate secret-management solution.
+
+---
+
+# 📚 Project Documentation
+
+Additional documentation should include:
+
+- API Documentation
+- ER Diagram
+- Architecture Diagram
+- Testing Documentation
+- Deployment Guide
+- Technical Decision Records
+
+---
+
+# 🎯 Project Goal
+
+Saajnika aims to demonstrate how a real production-oriented e-commerce platform can be designed and implemented with:
+
+```text
+Modern Frontend
+       +
+REST API
+       +
+Relational Database
+       +
+Authentication
+       +
+Payments
+       +
+Inventory
+       +
+Shipping
+       +
+Background Processing
+       +
+Caching
+       +
+Security
+       +
+Testing
+       +
+Production Deployment
+```
+
+---
+
+# 👨‍💻 Development
+
+**Project:** Saajnika  
+**Type:** Women's Fashion E-Commerce Platform  
+**Architecture:** React + Django REST + PostgreSQL + Redis + Celery  
+**Payment:** Razorpay  
 **Media:** Cloudinary  
-**Cache / Queue:** Redis + BullMQ  
-**Payments:** Razorpay  
-**Shipping:** Shiprocket / Equivalent
+**Shipping:** Shiprocket / Equivalent  
+**Deployment:** Docker + Nginx + Gunicorn
 
-## 📜 License
+---
 
-This project is developed as part of an internship/project assignment. Usage and distribution are subject to the project owner and organization requirements.
+## ⭐ Status
 
-> **Build it like someone will actually have to operate it after you leave.**
+🚧 **Under Active Development**
+
+Implementation follows the defined milestone sequence:
+
+**Foundation → Authentication → Catalog → Cart → Checkout → Payments → Orders → Async Processing → Shipping → Production**
+
+---
+
+## 📄 License
+
+Add the applicable project license here.
