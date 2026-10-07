@@ -1,211 +1,273 @@
-# SAAJNIKA
+# SAAJNIKA — Frontend
 
 ### Production-Ready Women's Fashion E-Commerce Platform
 
-Saajnika is a production-style women's fashion e-commerce platform designed to provide a complete customer shopping journey — from product discovery and search to cart, checkout, payment, order tracking, and fulfilment.
+This repository contains the **React frontend** for Saajnika, a production-style women's-fashion e-commerce platform.
 
-The platform also provides administrative and operational capabilities for managing products, inventory, orders, payments, coupons, banners, customers, and other business operations.
+The frontend is responsible for the customer and administrative web interface defined in the Saajnika Internship Project Implementation Plan. It communicates with the Django REST Framework API for authentication, catalog, cart, checkout, payments, orders, shipping, and administration.
+
+> **Important:** The technology stack below follows the internship project plan exactly. No frontend technology has been substituted.
 
 ---
 
-##  Project Overview
+# 🛠️ Technology Stack
 
-Saajnika is not designed as a static or demo store.
+| Layer | Required Technology | Frontend Responsibility |
+|---|---|---|
+| Frontend | **React** | Component-based web application |
+| UI | **Bootstrap / Tailwind** | Responsive and maintainable UI |
+| Backend API | **Django + Django REST Framework** | REST API consumed by frontend |
+| Authentication | **JWT / SimpleJWT** | Access/refresh-token based authentication |
+| Database | **PostgreSQL** | Persistent data accessed through the API |
+| Media | **Cloudinary** | Product/banner media delivered to frontend |
+| Cache / Broker | **Redis** | Backend infrastructure; frontend consumes resulting API data |
+| Async Jobs | **Celery** | Backend background processing |
+| Payments | **Razorpay** | Customer payment checkout flow |
+| Shipping | **Shiprocket or equivalent** | Shipping/serviceability/tracking data |
+| Web Server | **Nginx + Gunicorn** | Production serving infrastructure |
+| Containers | **Docker + Docker Compose** | Reproducible application environment |
+| Version Control | **Git + GitHub/GitLab** | Source control and collaboration |
+| Testing | **Pytest / Django tests + API tests** | Backend/API testing; frontend flows must also be validated |
 
-The system is built around a complete production-oriented e-commerce workflow:
+The required project technology baseline is React with Bootstrap/Tailwind on the frontend and Django + Django REST Framework on the backend. fileciteturn0file0L37-L65
+
+---
+
+# 🚀 Frontend Scope
+
+The frontend implements the web experience for the complete customer journey:
 
 ```text
 Home
-  ↓
+   ↓
 Categories
-  ↓
+   ↓
 Product Listing
-  ↓
+   ↓
 Search / Filters
-  ↓
+   ↓
 Product Details
-  ↓
+   ↓
 Cart
-  ↓
+   ↓
 Address
-  ↓
+   ↓
 Checkout
-  ↓
+   ↓
 Payment
-  ↓
+   ↓
 Order Confirmation
-  ↓
+   ↓
 Order Tracking
-  ↓
-Delivery
 ```
+
+The frontend must also provide the required administrative interface for:
+
+- Products
+- Inventory
+- Orders
+- Coupons
+- Banners
+- Promotions
+- Customers
+- Payments
+
+The project plan defines these customer and operational capabilities as part of the complete system. fileciteturn0file0L21-L36
+
+---
+
+# 🖥️ Frontend Screens
+
+The frontend must contain the following screens defined in the project plan.
+
+| Screen | Required Contents |
+|---|---|
+| **Home** | Header, search, categories, hero/banner, featured products, offers and footer |
+| **Product Listing** | Filters, sorting, pagination, product cards and stock state |
+| **Product Detail** | Gallery, title, price, discount, sizes/variants, quantity, stock, add-to-cart/buy-now |
+| **Cart** | Items, quantity controls, coupon, price breakdown and checkout CTA |
+| **Checkout** | Address selection, delivery, order summary and payment CTA |
+| **Payment Result** | Success/failure/pending states with recovery actions |
+| **Orders** | Order list and order detail with status timeline |
+| **Account** | Profile, addresses, wishlist and security/logout |
+| **Admin** | Operational dashboard for products, orders, inventory and promotions |
+
+fileciteturn0file0L272-L284
+
+---
+
+# 🏠 Home Page
+
+The Home page provides:
+
+- Header
+- Search
+- Category navigation
+- Hero/banner section
+- Featured products
+- Offers
+- Footer
+
+Product and banner media are provided through the backend/media system using Cloudinary.
+
+---
+
+# 🛍️ Product Listing
+
+The product listing interface supports:
+
+- Category navigation
+- Product search
+- Filters
+  - Category
+  - Size
+  - Price range
+  - Availability
+  - Relevant product attributes
+- Sorting
+  - Newest
+  - Price ascending
+  - Price descending
+  - Relevance
+- Pagination
+- Featured products
+- New products
+- Discounted products
+- Product stock state
+
+These catalog behaviours are defined in the project plan. fileciteturn0file0L133-L140
+
+---
+
+# 👗 Product Detail
+
+The Product Detail page provides:
+
+- Product gallery
+- Product title
+- Description
+- Price
+- Sale/discount information
+- Size/variant selection
+- Quantity
+- Stock status
+- Add to Cart
+- Buy Now
+- Related products
+
+The UI must prevent customers from attempting to purchase out-of-stock variants. fileciteturn0file0L127-L140
+
+---
+
+# 🛒 Cart
+
+The Cart screen provides:
+
+- Cart items
+- Quantity controls
+- Remove item
+- Variant information
+- Stock state
+- Coupon input
+- Price breakdown
+- Checkout CTA
+
+The frontend displays pricing and stock information returned by the server. The browser is not the authority for final pricing or inventory.
+
+---
+
+# 💳 Checkout
+
+The Checkout screen provides:
+
+- Delivery address selection
+- Delivery information
+- Order summary
+- Discount information
+- Shipping/tax/fee information where applicable
+- Final payable amount
+- Payment CTA
 
 The backend remains authoritative for:
 
-- Pricing
-- Inventory
-- Payment state
-- Order state
+- Cart validation
+- Stock validation
 - Coupon validation
-- Checkout calculations
-- Order transitions
+- Pricing
+- Final total
+- Order creation
+
+The frontend must therefore treat checkout data returned by the API as authoritative. fileciteturn0file0L147-L163
 
 ---
 
-# Key Features
+# 💰 Razorpay Payment UI
 
-## 👩 Customer Features
-
-- Customer registration and login
-- JWT authentication
-- OTP verification
-- Profile management
-- Delivery address management
-- Product browsing
-- Product search
-- Product filtering
-- Product sorting
-- Product variants
-- Size/color selection
-- Wishlist
-- Shopping cart
-- Buy Now
-- Coupon application
-- Checkout
-- Razorpay payment
-- Order history
-- Order tracking
-- Account security
-- Transactional notifications
-
----
-
-## 🛍️ Product & Catalog
-
-### Product
-
-- Product name
-- Slug
-- Description
-- Category
-- Brand / collection
-- Base price
-- Sale price
-- Product status
-- SEO metadata
-- Timestamps
-
-### Variants
-
-- Size
-- Color
-- Other business-specific attributes
-- SKU
-
-### Inventory
-
-- Available quantity
-- Reserved quantity where applicable
-- Low-stock threshold
-- Stock status
-- Inventory history
-- Admin inventory adjustments
-
-### Product Media
-
-Product and banner images are managed through Cloudinary.
-
-Features include:
-
-- Multiple images
-- Thumbnails
-- Primary image
-- Image ordering
-- Cloudinary transformations
-
-The system prevents purchasing unavailable variants and revalidates stock during checkout.
-
----
-
-# 🛒 Cart & Checkout
-
-The checkout system is completely server-controlled.
-
-### Cart
-
-Users can:
-
-- Add products
-- Update quantities
-- Remove products
-- View stock state
-- Calculate cart subtotal
-
-### Checkout
-
-The backend calculates:
-
-- Product prices
-- Discounts
-- Coupon discounts
-- Shipping charges
-- Applicable taxes/fees
-- Final payable amount
-
-The browser is never treated as the source of truth for the final amount.
-
----
-
-# 💳 Payment System
-
-Saajnika uses **Razorpay** for payment processing.
-
-### Payment Flow
+The frontend integrates with the **Razorpay** payment flow specified in the project plan.
 
 ```text
-Customer
-   ↓
 React Frontend
-   ↓
-Django API
-   ↓
-Validate Cart
-   ↓
-Validate Stock
-   ↓
-Calculate Final Amount
-   ↓
+      ↓
+Django REST API
+      ↓
+Validate Cart / Stock / Pricing
+      ↓
 Create Razorpay Order
-   ↓
+      ↓
 Razorpay Checkout
-   ↓
-Payment
-   ↓
+      ↓
+Customer Payment
+      ↓
 Backend Verification
-   ↓
-Webhook Processing
-   ↓
-Order Paid
+      ↓
+Order Confirmation
 ```
 
-### Payment Security
+The frontend may receive payment identifiers from Razorpay and send them to the backend for verification.
 
-- Razorpay order created server-side
-- Server-calculated amount
-- Payment signature verification
-- Webhook verification
-- Webhook idempotency
-- Payment audit records
-- Duplicate processing prevention
-- Secret keys remain server-side
-
-> Razorpay secret keys must never be exposed to the React browser bundle.
+The frontend must **never contain or expose the Razorpay secret key**. Payment signature verification and webhook processing remain backend responsibilities. fileciteturn0file0L176-L198
 
 ---
 
-# 📦 Order Management
+# 💵 Payment Result States
 
-Orders use controlled backend state transitions.
+The frontend must handle:
+
+```text
+SUCCESS
+FAILED
+PENDING
+```
+
+Payment states must provide clear recovery actions.
+
+Examples:
+
+- Retry payment
+- Return to checkout
+- View order
+- Continue shopping
+
+The project plan explicitly requires clear actions for pending/failed payment states. fileciteturn0file0L285-L290
+
+---
+
+# 📦 Orders
+
+The Orders section provides:
+
+- Order list
+- Order details
+- Purchased items
+- Purchased prices
+- Discounts
+- Delivery information
+- Payment reference/status where appropriate
+- Order status timeline
+- Tracking information
+- Cancellation action where supported
+
+The backend controls the valid order state transitions:
 
 ```text
 CREATED
@@ -235,349 +297,213 @@ RETURNED
 REFUNDED
 ```
 
-Orders preserve historical information such as:
-
-- Purchased price
-- Discount
-- Shipping address snapshot
-- SKU / variant information
-- Payment references
-- Gateway order ID
-- Order status
-- Timestamps
+The frontend displays the state supplied by the backend and does not independently change order state. fileciteturn0file0L164-L175
 
 ---
 
-# 🚚 Shipping & Fulfilment
+# 👤 Account
 
-Shipping is designed around a provider abstraction such as Shiprocket or an equivalent provider.
+The Account section includes:
 
-Supported functionality includes:
+- Profile
+- Addresses
+- Wishlist
+- Order history
+- Account operations
+- Security/logout
 
-- Pincode serviceability
-- Shipment creation
-- Courier selection
-- Shipment ID
-- Tracking number
-- Tracking updates
-- Delivery status
-- Provider failure handling
-- Safe retries
+The customer must only see their own account, address, wishlist and order information.
 
-The customer sees simplified shipment statuses without exposing internal provider details.
+Authorization remains enforced by the server. fileciteturn0file0L105-L109
 
 ---
 
-# 📧 Notifications & Background Jobs
+# 🧑‍💼 Admin Frontend
 
-Saajnika uses **Celery + Redis** for asynchronous and scheduled processing.
+The frontend provides operational screens for the administration system.
 
-Redis is used for:
+### Products
 
-- Caching
-- Celery message brokering
-
-Celery workers handle:
-
-- Email
-- SMS tasks
-- OTP delivery
-- Order notifications
-- Shipping notifications
-- Payment reconciliation
-- Abandoned-cart cleanup
-- Cache invalidation
-
-> Redis itself is not the email system. Celery workers consume queued jobs and communicate with the configured SMTP/email provider.
-
-### Notification Events
-
-- Welcome / account verification
-- OTP verification
-- Order placed
-- Payment successful
-- Payment failed
-- Order shipped
-- Order delivered
-- Password/security notifications
-
-Tasks use bounded retries and exponential backoff where appropriate.
-
----
-
-# 👨‍💼 Admin & Operations
-
-The platform includes administrative functionality for managing the business.
-
-### Admin Modules
-
-#### Products
-
-- Create products
-- Edit products
-- Archive products
+- Create/edit products
 - Manage variants
 - Manage prices
 - Manage images
 - Manage stock
+- Archive products
 
-#### Categories
+### Categories
 
 - Create categories
 - Reorder categories
 - Control visibility
 
-#### Orders
+### Orders
 
 - Search orders
 - Inspect orders
-- Update allowed states
-- Cancel orders
-- Refund where supported
+- Update permitted states
+- Cancel/refund where supported
 
-#### Payments
+### Payments
 
 - View payment references
 - View reconciliation status
 
-#### Coupons
+### Coupons
 
 - Create coupon codes
-- Configure validity
-- Set usage limits
-- Configure minimum order value
-- Configure discounts
+- Validity
+- Usage limits
+- Minimum order value
+- Discount rules
 
-#### Banners
+### Banners
 
 - Manage homepage banners
 - Manage carousel content
-- Configure ordering
+- Control ordering
 
-#### Customers
+### Customers
 
-- Search accounts
-- View relevant account/order information
+- Search customer accounts
+- View relevant customer/order information
 
-#### Inventory
+### Inventory
 
 - Stock adjustments
 - Low-stock visibility
 - Inventory history
 
-#### Audit
+### Audit
 
-- Record admin action
-- Record who performed the action
-- Record when the action occurred
+- Display relevant audit information provided by the API
 
----
-
-# 🏗️ Technology Stack
-
-| Layer | Technology |
-|---|---|
-| Frontend | React |
-| UI | Bootstrap / Tailwind CSS |
-| Backend | Django |
-| API | Django REST Framework |
-| Database | PostgreSQL |
-| Authentication | JWT / SimpleJWT |
-| Media Storage | Cloudinary |
-| Cache | Redis |
-| Message Broker | Redis |
-| Background Jobs | Celery |
-| Scheduler | Celery Beat |
-| Payments | Razorpay |
-| Shipping | Shiprocket / Equivalent |
-| Web Server | Nginx |
-| Application Server | Gunicorn |
-| Containers | Docker + Docker Compose |
-| Version Control | Git + GitHub/GitLab |
-| Testing | Pytest / Django Tests / API Tests |
-| Monitoring | Structured Logs + Error Monitoring |
+These modules correspond to the administration scope in the project plan. fileciteturn0file0L234-L246
 
 ---
 
-# 🏛️ System Architecture
+# 🔐 Authentication
+
+Authentication uses the project's required **JWT / SimpleJWT** architecture.
+
+Expected frontend flow:
 
 ```text
-                         ┌──────────────────────┐
-                         │      Customer        │
-                         └──────────┬───────────┘
-                                    │
-                                    ▼
-                         ┌──────────────────────┐
-                         │    React Frontend    │
-                         │   Customer + Admin   │
-                         └──────────┬───────────┘
-                                    │ HTTPS
-                                    ▼
-                         ┌──────────────────────┐
-                         │        Nginx         │
-                         │    Reverse Proxy     │
-                         └──────────┬───────────┘
-                                    │
-                                    ▼
-                         ┌──────────────────────┐
-                         │    Django REST API   │
-                         │    Business Logic    │
-                         └───────┬───────┬──────┘
-                                 │       │
-                    ┌────────────┘       └─────────────┐
-                    ▼                                  ▼
-          ┌──────────────────┐                ┌──────────────────┐
-          │    PostgreSQL    │                │      Redis       │
-          │ Persistent Data  │                │ Cache / Broker   │
-          └──────────────────┘                └────────┬─────────┘
-                                                       │
-                                                       ▼
-                                             ┌──────────────────┐
-                                             │      Celery       │
-                                             │ Background Jobs   │
-                                             └───────┬──────────┘
-                                                     │
-                    ┌────────────────────────────────┼──────────────┐
-                    ▼                                ▼              ▼
-             ┌────────────┐                  ┌────────────┐  ┌────────────┐
-             │ Cloudinary │                  │  Razorpay  │  │ Shiprocket │
-             │   Media    │                  │  Payments  │  │  Shipping  │
-             └────────────┘                  └────────────┘  └────────────┘
+Send OTP
+   ↓
+Verify OTP
+   ↓
+Receive Access + Refresh Tokens
+   ↓
+Authenticated Application
+   ↓
+Access Token Expires
+   ↓
+Refresh Token Flow
+   ↓
+Continue Session / Logout
 ```
 
----
+The frontend must support:
 
-# 📁 Repository Structure
+- Login/authentication flow
+- OTP verification UI
+- Protected routes
+- Access-token handling
+- Refresh-token flow
+- Logout
+- Authentication failure handling
 
-```text
-saajnika/
-│
-├── backend/
-│   ├── apps/
-│   │   ├── catalog/
-│   │   ├── accounts/
-│   │   ├── cart/
-│   │   ├── orders/
-│   │   ├── payments/
-│   │   ├── shipping/
-│   │   └── notifications/
-│   │
-│   ├── manage.py
-│   ├── requirements.txt
-│   └── ...
-│
-├── frontend/
-│   ├── src/
-│   ├── public/
-│   ├── package.json
-│   └── ...
-│
-├── docker/
-│   ├── nginx/
-│   └── ...
-│
-├── docs/
-│   ├── API.md
-│   ├── ARCHITECTURE.md
-│   ├── ERD.md
-│   ├── TESTING.md
-│   └── DEPLOYMENT.md
-│
-├── docker-compose.yml
-├── .gitignore
-└── README.md
-```
+The project plan requires short-lived access tokens, controlled refresh, OTP expiry/single-use behaviour, and protected server endpoints. fileciteturn0file0L97-L115
 
 ---
 
-# 🔐 Authentication & Security
+# 🔌 API Integration
 
-### Authentication
-
-- Custom user model
-- JWT access token
-- JWT refresh token
-- Short-lived access tokens
-- Controlled refresh strategy
-- OTP verification
-- Logout/token invalidation strategy
-
-### Authorization
-
-- Customer role
-- Admin role
-- Server-side permission enforcement
-- Customer data isolation
-- Admin endpoint protection
-
-### Security Controls
-
-- HTTPS
-- Environment-based secrets
-- CORS configuration
-- CSRF protection where applicable
-- DRF input validation
-- Rate limiting
-- Webhook signature verification
-- Django ORM / parameterized queries
-- Upload validation
-- PII protection
-- No secrets in Git
-
----
-
-# 🔌 API Structure
+The React application communicates with the **Django REST Framework API**.
 
 ## Authentication
 
 ```text
-POST /api/auth/send-otp/
-POST /api/auth/verify-otp/
-POST /api/auth/refresh/
-POST /api/auth/logout/
+/api/auth/send-otp/
+/api/auth/verify-otp/
+/api/auth/refresh/
+/api/auth/logout/
+```
+
+## Profile
+
+```text
+/api/profile/
+/api/profile/update/
 ```
 
 ## Products
 
 ```text
-GET /api/products/
-GET /api/products/{id}/
-GET /api/products/home/
+/api/products/
+/api/products/{id}/
+/api/products/home/
+```
+
+## Categories
+
+```text
+/api/categories/
+/api/categories/{slug}/
 ```
 
 ## Cart
 
 ```text
-GET    /api/cart/
-POST   /api/cart/add/
-PATCH  /api/cart/update/
-DELETE /api/cart/remove/
+/api/cart/
+/api/cart/add/
+/api/cart/update/
+/api/cart/remove/
 ```
 
-## Checkout & Payments
+## Addresses
 
 ```text
-POST /api/checkout/
-POST /api/buy-now/
+/api/addresses/
+/api/addresses/{id}/
+```
 
-POST /api/payments/create/
-POST /api/payments/verify/
-POST /api/payments/webhook/
+## Wishlist
+
+```text
+/api/wishlist/
+/api/wishlist/toggle/
+```
+
+## Checkout
+
+```text
+/api/checkout/
+/api/buy-now/
+```
+
+## Payments
+
+```text
+/api/payments/create/
+/api/payments/verify/
+/api/payments/webhook/
 ```
 
 ## Orders
 
 ```text
-GET  /api/orders/
-GET  /api/orders/{id}/
-POST /api/orders/{id}/cancel/
+/api/orders/
+/api/orders/{id}/
+/api/orders/{id}/cancel/
 ```
 
 ## Shipping
 
 ```text
-GET /api/shipping/serviceability/
-GET /api/shipping/track/{id}/
+/api/shipping/serviceability/
+/api/shipping/track/{id}/
 ```
 
 ## Admin
@@ -588,503 +514,401 @@ GET /api/shipping/track/{id}/
 /api/admin/inventory/
 ```
 
----
-
-# 🖥️ Frontend Screens
-
-| Screen | Main Functionality |
-|---|---|
-| Home | Header, search, categories, banners, offers |
-| Product Listing | Filters, sorting, pagination |
-| Product Detail | Gallery, variants, pricing, stock |
-| Cart | Items, quantities, coupon, price breakdown |
-| Checkout | Address, delivery, summary, payment |
-| Payment Result | Success, failure, pending states |
-| Orders | Order history and tracking |
-| Account | Profile, addresses, wishlist, security |
-| Admin | Products, orders, inventory, promotions |
+These endpoint domains follow the API design specified in the implementation plan. fileciteturn0file0L247-L266
 
 ---
 
-# 📱 Responsive & UX Requirements
+# 📁 Frontend Repository Structure
 
-The frontend is designed for:
+The project plan specifies `frontend/` as the React application. A clean React organization can be maintained inside that directory:
 
-- Mobile
-- Tablet
-- Desktop
+```text
+frontend/
+│
+├── public/
+│
+├── src/
+│   ├── components/
+│   │   ├── common/
+│   │   ├── layout/
+│   │   ├── product/
+│   │   ├── cart/
+│   │   ├── checkout/
+│   │   ├── order/
+│   │   └── admin/
+│   │
+│   ├── pages/
+│   │   ├── Home/
+│   │   ├── Products/
+│   │   ├── ProductDetail/
+│   │   ├── Cart/
+│   │   ├── Checkout/
+│   │   ├── PaymentResult/
+│   │   ├── Orders/
+│   │   ├── Account/
+│   │   └── Admin/
+│   │
+│   ├── services/
+│   │   └── api/
+│   │
+│   ├── hooks/
+│   ├── context/
+│   ├── routes/
+│   ├── utils/
+│   └── assets/
+│
+├── package.json
+└── README.md
+```
 
-Every data-heavy screen should provide:
+This is a frontend organization proposal; the required project plan itself specifies React under `frontend/` without prescribing a deeper component directory structure. fileciteturn0file0L84-L96
 
-- Loading state
-- Empty state
-- Error state
-- Retry action
+---
 
-Additional UX requirements:
+# 🔄 Required UI States
 
-- Graceful JWT expiration handling
-- No purchasing out-of-stock variants
-- Clear payment failure/pending recovery
-- Duplicate checkout protection
+Every data-heavy screen must provide:
+
+```text
+Loading
+   ↓
+Success
+   ↓
+Empty
+   ↓
+Error
+   ↓
+Retry
+```
+
+Examples:
+
+- Product loading
+- Empty product results
+- Empty cart
+- Empty wishlist
+- Empty orders
+- API error
+- Network error
+- Authentication expiry
+- Payment failure
+- Payment pending
+- Out-of-stock variant
+
+The project plan explicitly requires loading, empty, error and retry states for data-heavy screens. fileciteturn0file0L285-L292
+
+---
+
+# 📱 Responsive Design
+
+The frontend must work across:
+
+### Mobile
+
+- Responsive navigation
+- Product cards
+- Product details
+- Cart
+- Checkout
+- Account
+
+### Tablet
+
+- Responsive product grids
+- Checkout layout
+- Account/order interfaces
+
+### Desktop
+
+- Full product grids
+- Expanded navigation
+- Admin operational interface
+
+The implementation plan requires responsive behaviour across mobile, tablet and desktop. fileciteturn0file0L285-L292
+
+---
+
+# ♿ Accessibility
+
+The frontend should maintain:
+
 - Accessible labels
 - Keyboard navigation where applicable
 - Readable contrast
+- Clear form feedback
+- Usable controls
+- Responsive layouts
+
+These are part of the required UX edge cases in the project plan. fileciteturn0file0L285-L292
 
 ---
 
-# 🐳 Local Development
+# 🛡️ Frontend Security Rules
 
-## Prerequisites
+The frontend must follow these rules:
 
-- Git
-- Docker
-- Docker Compose
-- Node.js
-- Python
-- PostgreSQL tools if required
+- Never expose backend secrets
+- Never expose Razorpay secret keys
+- Never expose database credentials
+- Never store production secrets in source control
+- Do not trust browser-calculated final prices
+- Do not trust browser-calculated inventory
+- Respect server-side permissions
+- Handle expired/invalid JWT gracefully
+- Do not expose internal backend errors to customers
+- Use API validation responses to provide actionable UI errors
 
-## Clone Repository
-
-```bash
-git clone <YOUR_REPOSITORY_URL>
-cd saajnika
-```
+The project plan specifically requires secrets to be stored through environment variables/secret management and requires server-side validation for sensitive operations. fileciteturn0file0L110-L123
 
 ---
 
-# ⚙️ Environment Variables
+# ⚙️ Environment Configuration
 
-Create environment files according to the project configuration.
+The exact frontend environment-variable names should match the React build configuration used by the project.
 
 Example:
 
 ```env
-# Django
-SECRET_KEY=your_secret_key
-DEBUG=True
-
-# Database
-POSTGRES_DB=saajnika
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=your_password
-POSTGRES_HOST=db
-POSTGRES_PORT=5432
-
-# Redis
-REDIS_URL=redis://redis:6379/0
-
-# JWT
-JWT_SECRET_KEY=your_jwt_secret
-
-# Cloudinary
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-
-# Razorpay
-RAZORPAY_KEY_ID=your_key_id
-RAZORPAY_KEY_SECRET=your_key_secret
-
-# Email
-EMAIL_HOST=your_smtp_host
-EMAIL_PORT=587
-EMAIL_HOST_USER=your_email
-EMAIL_HOST_PASSWORD=your_password
-
-# Shipping
-SHIPPING_API_KEY=your_shipping_key
+API_BASE_URL=http://localhost:8000/api
 ```
 
-> **Never commit `.env` files or production secrets to Git.**
+Only browser-safe configuration belongs in the frontend environment.
 
----
-
-# 🐳 Docker Setup
-
-Expected services:
+Do **not** put these in the React environment:
 
 ```text
-frontend
-backend
-postgres
-redis
-celery
-nginx
-```
-
-Start the development environment:
-
-```bash
-docker compose up --build
-```
-
-Run migrations:
-
-```bash
-docker compose exec backend python manage.py migrate
-```
-
-Create an admin user:
-
-```bash
-docker compose exec backend python manage.py createsuperuser
+RAZORPAY_SECRET
+DATABASE_PASSWORD
+JWT_SECRET
+CLOUDINARY_API_SECRET
+SMTP_PASSWORD
+SHIPPING_PRIVATE_API_KEY
 ```
 
 ---
 
-# 🧪 Testing
+# 💻 Frontend Development
 
-Saajnika follows a multi-layer testing strategy.
+## Prerequisites
 
-### Unit Tests
+Install the React project's required Node.js environment and package manager.
 
-- Pricing rules
-- Coupon rules
-- Inventory rules
-- Order transitions
-- Utility/service logic
-
-### API Tests
-
-- Authentication
-- Products
-- Cart
-- Checkout
-- Orders
-- Payment verification
-- Admin permissions
-
-### Integration Tests
-
-- PostgreSQL
-- Redis
-- Celery
-- Payment sandbox/mocks
-- Shipping sandbox/mocks
-
-Run tests:
+## Clone
 
 ```bash
-pytest
+git clone <YOUR_REPOSITORY_URL>
+cd saajnika/frontend
 ```
 
-or:
+## Install Dependencies
+
+Use the package manager defined by the actual project configuration.
 
 ```bash
-python manage.py test
+npm install
 ```
+
+## Start Development
+
+Use the development script defined in `package.json`.
+
+```bash
+npm run dev
+```
+
+> The project plan specifies **React + Bootstrap/Tailwind** but does not prescribe a specific React build tool or package manager. Therefore this README intentionally does not replace the documented stack with Vite, Next.js, or another framework.
 
 ---
 
-# 🧪 Critical Test Scenarios
+# 🧪 Frontend Quality & Testing
 
-### Concurrent Stock Purchase
+The project plan requires frontend coverage for:
 
-The system must prevent two users from purchasing more stock than exists.
+### Critical Components
 
-### Duplicate Payment Webhook
+- Forms
+- Product components
+- Cart controls
+- Loading/error states
+- Checkout flow
+
+### Critical Purchase Journey
 
 ```text
-Razorpay
-   │
-   ├── Webhook #1
-   │
-   └── Webhook #2
-          ↓
-     Idempotency Check
-          ↓
-   Process Only Once
+Browse Product
+   ↓
+Select Variant
+   ↓
+Add to Cart
+   ↓
+Checkout
+   ↓
+Payment
+   ↓
+Order Confirmation
+   ↓
+Order Tracking
 ```
 
-Other critical scenarios:
+### Critical Frontend Scenarios
 
-- Payment succeeds but frontend callback fails
-- Payment fails after internal order creation
-- Expired coupon
-- Overused coupon
-- JWT expiry during checkout
-- Temporary email failure
-- Shipping provider timeout
-- Unauthorized admin operation
+- Two checkout attempts
+- Out-of-stock variant
+- Payment failure
+- Payment pending
+- Authentication expiry during checkout
+- API failure
+- Shipping provider failure
+- Empty cart
+- Empty order history
 
----
-
-# 🚀 Production Deployment
-
-Production architecture:
-
-```text
-Internet
-   ↓
-HTTPS
-   ↓
-Nginx
-   ↓
-Gunicorn
-   ↓
-Django REST API
-   ↓
-PostgreSQL
-   +
-Redis
-   +
-Celery Workers
-```
-
-Production requirements:
-
-- HTTPS
-- Nginx
-- Gunicorn
-- PostgreSQL
-- Redis
-- Celery workers
-- Secure environment variables
-- Cloudinary
-- Automated backups
-- Logs
-- Error monitoring
-- Worker restart handling
-- Deployment rollback strategy
+The project plan specifically lists the frontend critical-component layer and the critical purchase journey as regression concerns. fileciteturn0file0L315-L328
 
 ---
 
-# 💾 Backup Strategy
+# 🗺️ Frontend Implementation Sequence
 
-PostgreSQL backups should:
+The frontend follows the overall project milestone sequence:
 
-- Run regularly
-- Be stored separately from the application server
-- Maintain multiple restore points
-- Have documented restoration procedures
-- Be periodically tested
+| Phase | Frontend Deliverable |
+|---|---|
+| 1 | Foundation and application structure |
+| 2 | Authentication UI and protected routes |
+| 3 | Product catalog, listing and detail |
+| 4 | Cart UI |
+| 5 | Checkout and address UI |
+| 6 | Razorpay payment flow and result states |
+| 7 | Orders and order status timeline |
+| 8 | Notification-related UI states |
+| 9 | Shipping/serviceability/tracking UI |
+| 10 | Production-ready UI, admin and final testing |
 
-> A backup that has never been restored is not a proven recovery strategy.
-
----
-
-# 🌿 Git Workflow
-
-Recommended workflow:
-
-```text
-main
- │
- ├── feature/authentication
- ├── feature/catalog
- ├── feature/cart
- ├── feature/checkout
- ├── feature/payments
- ├── feature/orders
- ├── feature/shipping
- └── feature/admin
-```
-
-Development practices:
-
-- Use feature branches
-- Keep commits focused
-- Write descriptive commit messages
-- Open Pull Requests / Merge Requests
-- Do not commit secrets
-- Do not commit database dumps
-- Keep README updated
-- Document architectural decisions
-- Track work using issues/tasks
-- Resolve lint/test failures before review
+The overall ten-phase implementation sequence is defined in the project plan. fileciteturn0file0L293-L314
 
 ---
 
-# 📋 Implementation Roadmap
+# ✅ Frontend Definition of Done
 
-| Phase | Module | Result |
-|---|---|---|
-| 1 | Foundation | Docker, Django, React, PostgreSQL, Redis |
-| 2 | Authentication | User, OTP, JWT, permissions |
-| 3 | Catalog | Products, variants, Cloudinary |
-| 4 | Cart | Cart APIs, UI, stock validation |
-| 5 | Checkout | Address, coupons, pricing |
-| 6 | Payments | Razorpay, verification, webhooks |
-| 7 | Orders | History, state machine, admin |
-| 8 | Async | Celery, Redis, notifications |
-| 9 | Shipping | Serviceability, shipment, tracking |
-| 10 | Production | Nginx, Gunicorn, backups, monitoring |
+The frontend portion is ready when:
 
----
+### Customer Screens
 
-# 📊 Definition of Done
+- [ ] Home completed
+- [ ] Product listing completed
+- [ ] Product detail completed
+- [ ] Cart completed
+- [ ] Checkout completed
+- [ ] Payment result states completed
+- [ ] Orders completed
+- [ ] Account completed
 
-The project is considered complete when the critical customer, payment, fulfilment, administration and production workflows are implemented and tested.
+### Catalog
 
-### Customer
-
-- [ ] Registration/login
-- [ ] JWT-protected APIs
-- [ ] Product browsing
-- [ ] Search/filter
-- [ ] Product variants
-- [ ] Wishlist
-- [ ] Cart
-- [ ] Address management
-- [ ] Checkout
-- [ ] Order tracking
+- [ ] Search
+- [ ] Filters
+- [ ] Sorting
+- [ ] Pagination
+- [ ] Variant selection
+- [ ] Stock state
+- [ ] Product gallery
 
 ### Commerce
 
-- [ ] Server-side pricing
-- [ ] Coupon validation
-- [ ] Inventory validation
-- [ ] Transactional order creation
+- [ ] Cart quantity controls
+- [ ] Coupon UI
+- [ ] Price breakdown
+- [ ] Address selection
+- [ ] Checkout CTA
+- [ ] Buy Now
 
 ### Payments
 
-- [ ] Razorpay integration
-- [ ] Signature verification
-- [ ] Webhook verification
-- [ ] Idempotency
+- [ ] Razorpay checkout integration
+- [ ] Success state
+- [ ] Failure state
+- [ ] Pending state
+- [ ] Recovery actions
 
-### Operations
+### Orders
 
-- [ ] Admin product management
-- [ ] Inventory management
-- [ ] Order management
-- [ ] Promotions
-- [ ] Shipping integration
+- [ ] Order list
+- [ ] Order detail
+- [ ] Status timeline
+- [ ] Tracking information
+- [ ] Cancellation UI where supported
 
-### Infrastructure
+### UX
 
-- [ ] PostgreSQL
-- [ ] Redis
-- [ ] Celery
-- [ ] Docker
-- [ ] Nginx
-- [ ] Gunicorn
-- [ ] Backups
-- [ ] Logging
-- [ ] Error monitoring
+- [ ] Loading states
+- [ ] Empty states
+- [ ] Error states
+- [ ] Retry actions
+- [ ] Mobile responsive
+- [ ] Tablet responsive
+- [ ] Desktop responsive
+- [ ] Accessible labels
+- [ ] Readable contrast
 
-### Documentation
+### Security
 
-- [ ] README
-- [ ] API documentation
-- [ ] ER diagram
-- [ ] Architecture diagram
-- [ ] Testing report
-- [ ] Deployment guide
+- [ ] No backend secrets in frontend
+- [ ] No Razorpay secret in frontend
+- [ ] Protected routes
+- [ ] JWT expiry handled
+- [ ] Server-side authorization respected
 
 ---
 
-# 📦 Final Handoff Package
+# 📸 Screenshots
 
-The final project handoff should contain:
+Recommended screenshot directory:
 
 ```text
-Source Code
-├── Frontend
-├── Backend
-└── Configuration
-
-Documentation
-├── README
-├── API Documentation
-├── ER Diagram
-├── Architecture Diagram
-├── Test Report
-└── Deployment Guide
-
-Demo
-└── Complete customer purchase journey
+docs/
+└── screenshots/
+    ├── home.png
+    ├── product-listing.png
+    ├── product-detail.png
+    ├── cart.png
+    ├── checkout.png
+    ├── payment-result.png
+    ├── orders.png
+    ├── account.png
+    └── admin.png
 ```
 
 ---
 
-# 🔒 Security Notice
+# 📌 Project Status
 
-Never commit the following to Git:
+🚧 **Frontend Under Active Development**
 
-```text
-.env
-API Keys
-Razorpay Secret
-Cloudinary Secret
-Database Passwords
-JWT Secrets
-SMTP Passwords
-Shipping API Keys
-Production Credentials
-Database Dumps
-```
-
-Use environment variables or an appropriate secret-management solution.
-
----
-
-# 📚 Project Documentation
-
-Additional documentation should include:
-
-- API Documentation
-- ER Diagram
-- Architecture Diagram
-- Testing Documentation
-- Deployment Guide
-- Technical Decision Records
-
----
-
-# 🎯 Project Goal
-
-Saajnika aims to demonstrate how a real production-oriented e-commerce platform can be designed and implemented with:
+The frontend is being implemented as part of the complete Saajnika production e-commerce system.
 
 ```text
-Modern Frontend
-       +
-REST API
-       +
-Relational Database
-       +
+Foundation
+    ↓
 Authentication
-       +
+    ↓
+Catalog
+    ↓
+Cart
+    ↓
+Checkout
+    ↓
 Payments
-       +
-Inventory
-       +
+    ↓
+Orders
+    ↓
+Async / Notifications
+    ↓
 Shipping
-       +
-Background Processing
-       +
-Caching
-       +
-Security
-       +
-Testing
-       +
-Production Deployment
+    ↓
+Admin / Production Readiness
 ```
 
 ---
 
-# 👨‍💻 Development
+# 📄 License
 
-**Project:** Saajnika  
-**Type:** Women's Fashion E-Commerce Platform  
-**Architecture:** React + Django REST + PostgreSQL + Redis + Celery  
-**Payment:** Razorpay  
-**Media:** Cloudinary  
-**Shipping:** Shiprocket / Equivalent  
-**Deployment:** Docker + Nginx + Gunicorn
-
----
-
-## ⭐ Status
-
-🚧 **Under Active Development**
-
-Implementation follows the defined milestone sequence:
-
-**Foundation → Authentication → Catalog → Cart → Checkout → Payments → Orders → Async Processing → Shipping → Production**
-
----
-
-
+Add the applicable project license here.
