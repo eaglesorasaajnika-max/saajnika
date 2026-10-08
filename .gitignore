@@ -21,7 +21,7 @@ dist-ssr
 .env.test.local
 .env.production.local
 
-# Editor directories and files
+# Editor and Agent directories
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -31,3 +31,14 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+.agent/
+.agents/
+.gemini/
+.gsd/
+adapters/
+scripts/
+model_capabilities.yaml
+GSD-STYLE.md
+PROJECT_RULES.md
+VERSION
+
